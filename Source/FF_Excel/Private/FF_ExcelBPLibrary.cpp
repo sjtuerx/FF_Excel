@@ -126,20 +126,25 @@ void UFF_ExcelBPLibrary::XLNT_Worksheets_Get_All(FDelegateXlntSheets DelegateShe
 
 	AsyncTask(ENamedThreads::AnyNormalThreadNormalTask, [DelegateSheets, In_Doc]()
 		{
-			TArray<FXlntWorksheet> Array_Sheets;
+			TArray<FXlntWorksheetProperties> Array_Sheets;
 			
 			int32 SheetCount = In_Doc->Document.sheet_count();
 			for (int32 Index_Sheet = 0; Index_Sheet < SheetCount; Index_Sheet++)
 			{
 				xlnt::worksheet Each_Worksheet = In_Doc->Document.sheet_by_index(Index_Sheet);
+
+				if (!Each_Worksheet.is_valid())
+				{
+					continue;
+				}
 				
-				FXlntWorksheet Worksheet_Struct;
-				Worksheet_Struct.Worksheet_Object = NewObject<UFFExcel_Xlnt_Worksheet>();
-				Worksheet_Struct.Worksheet_Object->Worksheet = Each_Worksheet;
-				Worksheet_Struct.Title = UTF8_TO_TCHAR(Each_Worksheet.title().c_str());
-				Worksheet_Struct.Id = Each_Worksheet.id();
-				Worksheet_Struct.Index = In_Doc->Document.index(Each_Worksheet);
-				Array_Sheets.Add(Worksheet_Struct);
+				FXlntWorksheetProperties Worksheet_Properties;
+				Worksheet_Properties.Worksheet_Object = NewObject<UFFExcel_Xlnt_Worksheet>();
+				Worksheet_Properties.Worksheet_Object->Worksheet = Each_Worksheet;
+				Worksheet_Properties.Title = UTF8_TO_TCHAR(Each_Worksheet.title().c_str());
+				Worksheet_Properties.Id = Each_Worksheet.id();
+				Worksheet_Properties.Index = In_Doc->Document.index(Each_Worksheet);
+				Array_Sheets.Add(Worksheet_Properties);
 			}
 
 			AsyncTask(ENamedThreads::GameThread, [DelegateSheets, Array_Sheets]()
@@ -153,9 +158,80 @@ void UFF_ExcelBPLibrary::XLNT_Worksheets_Get_All(FDelegateXlntSheets DelegateShe
 	);
 }
 
-bool UFF_ExcelBPLibrary::XLNT_Worksheets_Get_Title(FString& Out_Name, UFFExcel_Xlnt_Worksheet* In_Sheet)
+bool UFF_ExcelBPLibrary::XLNT_Worksheet_Get_By_Title(UFFExcel_Xlnt_Worksheet*& Out_Sheet, UFFExcel_Xlnt_Doc* In_Doc, FString In_Title)
+{
+	if (!IsValid(In_Doc))
+	{
+		return false;
+	}
+
+	xlnt::worksheet Found_Sheet = In_Doc->Document.sheet_by_title(TCHAR_TO_UTF8(*In_Title));
+	if (Found_Sheet.is_valid())
+	{
+		Out_Sheet = NewObject<UFFExcel_Xlnt_Worksheet>();
+		Out_Sheet->Worksheet = Found_Sheet;
+
+		return true;
+	}
+
+	else
+	{
+		return false;
+	}
+}
+
+bool UFF_ExcelBPLibrary::XLNT_Worksheet_Get_By_Id(UFFExcel_Xlnt_Worksheet*& Out_Sheet, UFFExcel_Xlnt_Doc* In_Doc, int32 In_Id)
+{
+	if (!IsValid(In_Doc))
+	{
+		return false;
+	}
+
+	xlnt::worksheet Found_Sheet = In_Doc->Document.sheet_by_id(In_Id);
+	if (Found_Sheet.is_valid())
+	{
+		Out_Sheet = NewObject<UFFExcel_Xlnt_Worksheet>();
+		Out_Sheet->Worksheet = Found_Sheet;
+
+		return true;
+	}
+
+	else
+	{
+		return false;
+	}
+}
+
+bool UFF_ExcelBPLibrary::XLNT_Worksheet_Get_By_Index(UFFExcel_Xlnt_Worksheet*& Out_Sheet, UFFExcel_Xlnt_Doc* In_Doc, int32 In_Index)
+{
+	if (!IsValid(In_Doc))
+	{
+		return false;
+	}
+
+	xlnt::worksheet Found_Sheet = In_Doc->Document.sheet_by_index(In_Index);
+	if (Found_Sheet.is_valid())
+	{
+		Out_Sheet = NewObject<UFFExcel_Xlnt_Worksheet>();
+		Out_Sheet->Worksheet = Found_Sheet;
+
+		return true;
+	}
+
+	else
+	{
+		return false;
+	}
+}
+
+bool UFF_ExcelBPLibrary::XLNT_Worksheet_Get_Title(FString& Out_Name, UFFExcel_Xlnt_Worksheet* In_Sheet)
 {
 	if (!IsValid(In_Sheet))
+	{
+		return false;
+	}
+
+	if (!In_Sheet->Worksheet.is_valid())
 	{
 		return false;
 	}
@@ -164,9 +240,14 @@ bool UFF_ExcelBPLibrary::XLNT_Worksheets_Get_Title(FString& Out_Name, UFFExcel_X
 	return true;
 }
 
-bool UFF_ExcelBPLibrary::XLNT_Worksheets_Get_Id(int32& Out_Id, UFFExcel_Xlnt_Worksheet* In_Sheet)
+bool UFF_ExcelBPLibrary::XLNT_Worksheet_Get_Id(int32& Out_Id, UFFExcel_Xlnt_Worksheet* In_Sheet)
 {
 	if (!IsValid(In_Sheet))
+	{
+		return false;
+	}
+
+	if (!In_Sheet->Worksheet.is_valid())
 	{
 		return false;
 	}
@@ -175,13 +256,33 @@ bool UFF_ExcelBPLibrary::XLNT_Worksheets_Get_Id(int32& Out_Id, UFFExcel_Xlnt_Wor
 	return true;
 }
 
-bool UFF_ExcelBPLibrary::XLNT_Worksheets_Get_Index(int32& Out_Index, UFFExcel_Xlnt_Worksheet* In_Sheet)
+bool UFF_ExcelBPLibrary::XLNT_Worksheet_Get_Index(int32& Out_Index, UFFExcel_Xlnt_Worksheet* In_Sheet)
 {
 	if (!IsValid(In_Sheet))
 	{
 		return false;
 	}
 
+	if (!In_Sheet->Worksheet.is_valid())
+	{
+		return false;
+	}
+
 	Out_Index = In_Sheet->Worksheet.workbook().index(In_Sheet->Worksheet);
 	return true;
+}
+
+void UFF_ExcelBPLibrary::XLNT_Cells_At_Column(FDelegateXlntCells DelegateCells, UFFExcel_Xlnt_Worksheet* In_Sheet)
+{
+	if (!IsValid(In_Sheet))
+	{
+		return;
+	}
+
+	if (!In_Sheet->Worksheet.is_valid())
+	{
+		return;
+	}
+
+	return;
 }
