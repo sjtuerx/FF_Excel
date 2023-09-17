@@ -272,7 +272,7 @@ bool UFF_ExcelBPLibrary::XLNT_Worksheet_Get_Index(int32& Out_Index, UFFExcel_Xln
 	return true;
 }
 
-void UFF_ExcelBPLibrary::XLNT_Cells_At_Column(FDelegateXlntCells DelegateCells, UFFExcel_Xlnt_Worksheet* In_Sheet)
+void UFF_ExcelBPLibrary::XLNT_Cells_At_Column(FDelegateXlntCells DelegateCells, UFFExcel_Xlnt_Worksheet* In_Sheet, int32 Index_Column)
 {
 	if (!IsValid(In_Sheet))
 	{
@@ -284,5 +284,45 @@ void UFF_ExcelBPLibrary::XLNT_Cells_At_Column(FDelegateXlntCells DelegateCells, 
 		return;
 	}
 
-	return;
+	AsyncTask(ENamedThreads::AnyNormalThreadNormalTask, [DelegateCells, In_Sheet, Index_Column]()
+		{
+			TArray<FXlntCellProperties> Array_Cells;
+			xlnt::row_t Row_Highest = In_Sheet->Worksheet.highest_row();
+			xlnt::row_t Row_Lowest = In_Sheet->Worksheet.lowest_row();
+
+			for (int32 Index_Row = (int32)Row_Lowest; Index_Row <= (int32)Row_Highest; ++Index_Row)
+			{
+				xlnt::cell_reference Each_Cell_Ref(Index_Column, Index_Row);
+				xlnt::cell Each_Cell = In_Sheet->Worksheet.cell(Each_Cell_Ref);
+
+				FXlntCellProperties EachCellProperties;
+				EachCellProperties.Cell_Object = NewObject<UFFExcel_Xlnt_Cell>();
+				EachCellProperties.Cell_Object->Cell = Each_Cell;
+				EachCellProperties.Position_String = UTF8_TO_TCHAR(Each_Cell.column().column_string().c_str()) + FString::FromInt((int32)Each_Cell.row());
+				EachCellProperties.Position_Referance = FVector2D((double)Each_Cell.column_index(), (double)Each_Cell.row());
+
+				Array_Cells.Add(EachCellProperties);
+			}
+			
+			AsyncTask(ENamedThreads::GameThread, [DelegateCells, Array_Cells]()
+				{
+					DelegateCells.ExecuteIfBound(true, Array_Cells);
+				}
+			);
+
+			return;
+		}
+	);
+
+}
+
+bool UFF_ExcelBPLibrary::XLNT_Cell_Get_Value(FString& Out_Value, UFFExcel_Xlnt_Cell* In_Cell)
+{
+	if (!IsValid(In_Cell))
+	{
+		return false;
+	}
+
+	Out_Value = UTF8_TO_TCHAR(In_Cell->Cell.to_string().c_str());
+	return true;
 }

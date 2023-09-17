@@ -105,20 +105,15 @@ public:
 	UFFExcel_Xlnt_Cell* Cell_Object = nullptr;
 
 	UPROPERTY(BlueprintReadWrite)
-	FString Value = "";
+	FString Position_String = "";
 
 	UPROPERTY(BlueprintReadWrite)
-	FString Position_Column = "";
+	FVector2D Position_Referance = FVector2D(0.f, 0.f);
 
-	UPROPERTY(BlueprintReadWrite)
-	FString Position_Row = "";
-
-	UPROPERTY(BlueprintReadWrite)
-	FVector2D Position_Index = FVector2D(0.f, 0.f);
 
 	bool operator == (const FXlntCellProperties& Other) const
 	{
-		return Value == Other.Value && Position_Column == Other.Position_Column && Position_Row == Other.Position_Row && Position_Index == Other.Position_Index;
+		return Position_String == Other.Position_String && Position_Referance == Other.Position_Referance;
 	}
 
 	bool operator != (const FXlntCellProperties& Other) const
@@ -129,17 +124,13 @@ public:
 
 FORCEINLINE uint32 GetTypeHash(const FXlntCellProperties& Key)
 {
-	uint32 Hash_Value = GetTypeHash(Key.Value);
-	uint32 Hash_Position_Column = GetTypeHash(Key.Position_Column);
-	uint32 Hash_Position_Row = GetTypeHash(Key.Position_Row);
-	uint32 Hash_Position_Index = GetTypeHash(Key.Position_Index);
+	uint32 Hash_Position_String = GetTypeHash(Key.Position_String);
+	uint32 Hash_Position_Referance = GetTypeHash(Key.Position_Referance);
 
 	uint32 GenericHash;
 	FMemory::Memset(&GenericHash, 0, sizeof(uint32));
-	GenericHash = HashCombine(GenericHash, Hash_Value);
-	GenericHash = HashCombine(GenericHash, Hash_Position_Column);
-	GenericHash = HashCombine(GenericHash, Hash_Position_Row);
-	GenericHash = HashCombine(GenericHash, Hash_Position_Index);
+	GenericHash = HashCombine(GenericHash, Hash_Position_String);
+	GenericHash = HashCombine(GenericHash, Hash_Position_Referance);
 
 	return GenericHash;
 }
@@ -183,6 +174,9 @@ class UFF_ExcelBPLibrary : public UBlueprintFunctionLibrary
 	static FF_EXCEL_API bool XLNT_Worksheet_Get_Index(int32& Out_Index, UFFExcel_Xlnt_Worksheet* In_Sheet);
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "XLNT - Get Cells at Column", Keywords = "xlnt, excel, work, sheet, worksheet, get, all, cell, cells, column"), Category = "FF_Excel|xlnt|Cells")
-	static FF_EXCEL_API void XLNT_Cells_At_Column(FDelegateXlntCells DelegateCells, UFFExcel_Xlnt_Worksheet* In_Sheet);
+	static FF_EXCEL_API void XLNT_Cells_At_Column(FDelegateXlntCells DelegateCells, UFFExcel_Xlnt_Worksheet* In_Sheet, int32 Index_Column);
+
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "XLNT - Get Worksheet Name", Keywords = "xlnt, excel, cell, get, value, string"), Category = "FF_Excel|xlnt|Worksheets")
+	static FF_EXCEL_API bool XLNT_Cell_Get_Value(FString& Out_Value, UFFExcel_Xlnt_Cell* In_Cell);
 
 };
