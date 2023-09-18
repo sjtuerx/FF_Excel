@@ -349,7 +349,7 @@ void UFF_ExcelBPLibrary::XLNT_Cells_At_Column(FDelegateXlntCells DelegateCells, 
 
 }
 
-bool UFF_ExcelBPLibrary::XLNT_Cell_Get_Value_Type(EXlntDataTypes Out_Types, UFFExcel_Xlnt_Cell* In_Cell)
+bool UFF_ExcelBPLibrary::XLNT_Cell_Get_Value_Type(EXlntDataTypes& Out_Types, UFFExcel_Xlnt_Cell* In_Cell)
 {
 	if (!IsValid(In_Cell))
 	{
