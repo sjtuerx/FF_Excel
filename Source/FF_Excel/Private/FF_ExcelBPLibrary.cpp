@@ -300,6 +300,39 @@ void UFF_ExcelBPLibrary::XLNT_Cells_At_Column(FDelegateXlntCells DelegateCells, 
 				EachCellProperties.Cell_Object->Cell = Each_Cell;
 				EachCellProperties.Position_String = UTF8_TO_TCHAR(Each_Cell.column().column_string().c_str()) + FString::FromInt((int32)Each_Cell.row());
 				EachCellProperties.Position_Referance = FVector2D((double)Each_Cell.column_index(), (double)Each_Cell.row());
+	
+				xlnt::cell_type CellType = Each_Cell.data_type();
+
+				switch (CellType)
+				{
+				case xlnt::cell_type::empty:
+					EachCellProperties.ValueType = EXlntDataTypes::Empty;
+					break;
+				case xlnt::cell_type::boolean:
+					EachCellProperties.ValueType = EXlntDataTypes::Boolean;
+					break;
+				case xlnt::cell_type::date:
+					EachCellProperties.ValueType = EXlntDataTypes::Date;
+					break;
+				case xlnt::cell_type::error:
+					EachCellProperties.ValueType = EXlntDataTypes::Error;
+					break;
+				case xlnt::cell_type::inline_string:
+					EachCellProperties.ValueType = EXlntDataTypes::String;
+					break;
+				case xlnt::cell_type::number:
+					EachCellProperties.ValueType = EXlntDataTypes::Number;
+					break;
+				case xlnt::cell_type::shared_string:
+					EachCellProperties.ValueType = EXlntDataTypes::String;
+					break;
+				case xlnt::cell_type::formula_string:
+					EachCellProperties.ValueType = EXlntDataTypes::String;
+					break;
+				default:
+					EachCellProperties.ValueType = EXlntDataTypes::None;
+					break;
+				}
 
 				Array_Cells.Add(EachCellProperties);
 			}
@@ -316,7 +349,50 @@ void UFF_ExcelBPLibrary::XLNT_Cells_At_Column(FDelegateXlntCells DelegateCells, 
 
 }
 
-bool UFF_ExcelBPLibrary::XLNT_Cell_Get_Value(FString& Out_Value, UFFExcel_Xlnt_Cell* In_Cell)
+bool UFF_ExcelBPLibrary::XLNT_Cell_Get_Value_Type(EXlntDataTypes Out_Types, UFFExcel_Xlnt_Cell* In_Cell)
+{
+	if (!IsValid(In_Cell))
+	{
+		return false;
+	}
+
+	xlnt::cell_type CellType = In_Cell->Cell.data_type();
+	
+	switch (CellType)
+	{
+	case xlnt::cell_type::empty:
+		Out_Types = EXlntDataTypes::Empty;
+		break;
+	case xlnt::cell_type::boolean:
+		Out_Types = EXlntDataTypes::Boolean;
+		break;
+	case xlnt::cell_type::date:
+		Out_Types = EXlntDataTypes::Date;
+		break;
+	case xlnt::cell_type::error:
+		Out_Types = EXlntDataTypes::Error;
+		break;
+	case xlnt::cell_type::inline_string:
+		Out_Types = EXlntDataTypes::String;
+		break;
+	case xlnt::cell_type::number:
+		Out_Types = EXlntDataTypes::Number;
+		break;
+	case xlnt::cell_type::shared_string:
+		Out_Types = EXlntDataTypes::String;
+		break;
+	case xlnt::cell_type::formula_string:
+		Out_Types = EXlntDataTypes::String;
+		break;
+	default:
+		Out_Types = EXlntDataTypes::None;
+		break;
+	}
+
+	return true;
+}
+
+bool UFF_ExcelBPLibrary::XLNT_Cell_Get_Value_String(FString& Out_Value, UFFExcel_Xlnt_Cell* In_Cell)
 {
 	if (!IsValid(In_Cell))
 	{

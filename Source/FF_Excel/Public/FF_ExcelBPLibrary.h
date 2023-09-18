@@ -10,6 +10,8 @@
 
 #include "Kismet/BlueprintFunctionLibrary.h"
 
+#include "FF_Excel_Enums.h"
+
 THIRD_PARTY_INCLUDES_START
 #include "xlnt.hpp"
 THIRD_PARTY_INCLUDES_END
@@ -110,6 +112,8 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	FVector2D Position_Referance = FVector2D(0.f, 0.f);
 
+	UPROPERTY(BlueprintReadWrite)
+	EXlntDataTypes ValueType = EXlntDataTypes::None;
 
 	bool operator == (const FXlntCellProperties& Other) const
 	{
@@ -176,7 +180,10 @@ class UFF_ExcelBPLibrary : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "XLNT - Get Cells at Column", Keywords = "xlnt, excel, work, sheet, worksheet, get, all, cell, cells, column"), Category = "FF_Excel|xlnt|Cells")
 	static FF_EXCEL_API void XLNT_Cells_At_Column(FDelegateXlntCells DelegateCells, UFFExcel_Xlnt_Worksheet* In_Sheet, int32 Index_Column);
 
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "XLNT - Get Worksheet Name", Keywords = "xlnt, excel, cell, get, value, string"), Category = "FF_Excel|xlnt|Worksheets")
-	static FF_EXCEL_API bool XLNT_Cell_Get_Value(FString& Out_Value, UFFExcel_Xlnt_Cell* In_Cell);
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "XLNT - Get Value Type", Keywords = "xlnt, excel, cell, get, value, type"), Category = "FF_Excel|xlnt|Cells")
+	static FF_EXCEL_API bool XLNT_Cell_Get_Value_Type(EXlntDataTypes Out_Types = EXlntDataTypes::None, UFFExcel_Xlnt_Cell* In_Cell = nullptr);
+
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "XLNT - Get Value as String", Keywords = "xlnt, excel, cell, get, value, string"), Category = "FF_Excel|xlnt|Cells")
+	static FF_EXCEL_API bool XLNT_Cell_Get_Value_String(FString& Out_Value, UFFExcel_Xlnt_Cell* In_Cell);
 
 };
