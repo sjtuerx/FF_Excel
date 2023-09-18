@@ -184,6 +184,9 @@ class UFF_ExcelBPLibrary : public UBlueprintFunctionLibrary
 	static FF_EXCEL_API bool XLNT_Cell_Get_Value_Type(EXlntDataTypes& Out_Types, UFFExcel_Xlnt_Cell* In_Cell = nullptr);
 
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "XLNT - Get Value as String", Keywords = "xlnt, excel, cell, get, value, string"), Category = "FF_Excel|xlnt|Cells")
-	static FF_EXCEL_API bool XLNT_Cell_Get_Value_String(FString& Out_Value, UFFExcel_Xlnt_Cell* In_Cell);
+	static FF_EXCEL_API bool XLNT_Cell_Get_Value_As_String(FString& Out_Value, UFFExcel_Xlnt_Cell* In_Cell);
+
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "XLNT - Get Value as Integer", Keywords = "xlnt, excel, cell, get, value, int32"), Category = "FF_Excel|xlnt|Cells")
+	static FF_EXCEL_API bool XLNT_Cell_Get_Value_As_Integer(int64& Out_Value, UFFExcel_Xlnt_Cell* In_Cell);
 
 };

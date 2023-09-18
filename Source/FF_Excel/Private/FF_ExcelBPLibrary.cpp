@@ -392,7 +392,7 @@ bool UFF_ExcelBPLibrary::XLNT_Cell_Get_Value_Type(EXlntDataTypes& Out_Types, UFF
 	return true;
 }
 
-bool UFF_ExcelBPLibrary::XLNT_Cell_Get_Value_String(FString& Out_Value, UFFExcel_Xlnt_Cell* In_Cell)
+bool UFF_ExcelBPLibrary::XLNT_Cell_Get_Value_As_String(FString& Out_Value, UFFExcel_Xlnt_Cell* In_Cell)
 {
 	if (!IsValid(In_Cell))
 	{
@@ -400,5 +400,16 @@ bool UFF_ExcelBPLibrary::XLNT_Cell_Get_Value_String(FString& Out_Value, UFFExcel
 	}
 
 	Out_Value = UTF8_TO_TCHAR(In_Cell->Cell.to_string().c_str());
+	return true;
+}
+
+bool UFF_ExcelBPLibrary::XLNT_Cell_Get_Value_As_Integer(int64& Out_Value, UFFExcel_Xlnt_Cell* In_Cell)
+{
+	if (!IsValid(In_Cell))
+	{
+		return false;
+	}
+
+	Out_Value = In_Cell->Cell.value<int64>();
 	return true;
 }
