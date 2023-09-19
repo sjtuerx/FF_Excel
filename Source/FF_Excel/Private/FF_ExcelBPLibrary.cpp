@@ -410,6 +410,17 @@ bool UFF_ExcelBPLibrary::XLNT_Cell_Get_Value_As_Integer(int64& Out_Value, UFFExc
 		return false;
 	}
 
-	Out_Value = In_Cell->Cell.value<int64>();
+	Out_Value = FMath::TruncToInt64(In_Cell->Cell.value<double>());
+	return true;
+}
+
+bool UFF_ExcelBPLibrary::XLNT_Cell_Get_Value_As_Double(double& Out_Value, UFFExcel_Xlnt_Cell* In_Cell)
+{
+	if (!IsValid(In_Cell))
+	{
+		return false;
+	}
+
+	Out_Value = In_Cell->Cell.value<double>();
 	return true;
 }
