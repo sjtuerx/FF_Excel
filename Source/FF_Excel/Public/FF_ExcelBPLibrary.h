@@ -177,8 +177,17 @@ class UFF_ExcelBPLibrary : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "XLNT - Get Worksheet Index", Keywords = "xlnt, excel, work, sheet, worksheet, get, index"), Category = "FF_Excel|xlnt|Worksheets")
 	static FF_EXCEL_API bool XLNT_Worksheet_Get_Index(int32& Out_Index, UFFExcel_Xlnt_Worksheet* In_Sheet);
 
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "XLNT - Get Worksheet Borders", Keywords = "xlnt, excel, cell, get, value, type"), Category = "FF_Excel|xlnt|Worksheets")
+	static FF_EXCEL_API bool XLNT_Worksheet_Get_Borders(int32& Highest_Column, int32& Lowest_Column, int32& Highest_Row, int32& Lowest_Row, UFFExcel_Xlnt_Worksheet* In_Sheet = nullptr);
+
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "XLNT - Get Cells at Column", Keywords = "xlnt, excel, work, sheet, worksheet, get, all, cell, cells, column"), Category = "FF_Excel|xlnt|Cells")
 	static FF_EXCEL_API void XLNT_Cells_At_Column(FDelegateXlntCells DelegateCells, UFFExcel_Xlnt_Worksheet* In_Sheet, int32 Index_Column);
+
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "XLNT - Get Cells at Row", Keywords = "xlnt, excel, work, sheet, worksheet, get, all, cell, cells, row"), Category = "FF_Excel|xlnt|Cells")
+	static FF_EXCEL_API void XLNT_Cells_At_Row(FDelegateXlntCells DelegateCells, UFFExcel_Xlnt_Worksheet* In_Sheet, int32 Index_Row);
+
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "XLNT - Get Cells All", Keywords = "xlnt, excel, work, sheet, worksheet, get, all, cell, cells"), Category = "FF_Excel|xlnt|Cells")
+	static FF_EXCEL_API void XLNT_Cells_All(FDelegateXlntCells DelegateCells, UFFExcel_Xlnt_Worksheet* In_Sheet);
 
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "XLNT - Get Value Type", Keywords = "xlnt, excel, cell, get, value, type"), Category = "FF_Excel|xlnt|Cells")
 	static FF_EXCEL_API bool XLNT_Cell_Get_Value_Type(EXlntDataTypes& Out_Types, UFFExcel_Xlnt_Cell* In_Cell = nullptr);
@@ -191,5 +200,11 @@ class UFF_ExcelBPLibrary : public UBlueprintFunctionLibrary
 
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "XLNT - Get Value as Double", Keywords = "xlnt, excel, cell, get, value, double, float"), Category = "FF_Excel|xlnt|Cells")
 	static FF_EXCEL_API bool XLNT_Cell_Get_Value_As_Double(double& Out_Value, UFFExcel_Xlnt_Cell* In_Cell);
+
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "XLNT - Get Value as Date", Keywords = "xlnt, excel, cell, get, value, date"), Category = "FF_Excel|xlnt|Cells")
+	static FF_EXCEL_API bool XLNT_Cell_Get_Value_As_Date(FDateTime& Out_Value, UFFExcel_Xlnt_Cell* In_Cell);
+
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "XLNT - Get Value as Bool", Keywords = "xlnt, excel, cell, get, value, bool"), Category = "FF_Excel|xlnt|Cells")
+	static FF_EXCEL_API bool XLNT_Cell_Get_Value_As_Bool(bool& Out_Value, UFFExcel_Xlnt_Cell* In_Cell);
 
 };
