@@ -30,6 +30,8 @@ public class FF_Excel : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+                "DataRegistry",
+				"Projects"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

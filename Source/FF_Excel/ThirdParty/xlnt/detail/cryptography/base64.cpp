@@ -30,8 +30,8 @@ std::string encode_base64(const std::vector<std::uint8_t> &input)
 {
     auto encoded_length = (input.size() + 2 - ((input.size() + 2) % 3)) / 3 * 4;
     auto output = std::string(encoded_length, '\0');
-    auto input_iterator = input.begin();
-    auto output_iterator = output.begin();
+    auto input_iterator_local = input.begin();
+    auto output_iterator_local = output.begin();
     auto i = std::size_t(0);
     auto j = std::size_t(0);
     std::array<std::uint8_t, 3> a3{{0}};
@@ -41,9 +41,9 @@ std::string encode_base64(const std::vector<std::uint8_t> &input)
         "abcdefghijklmnopqrstuvwxyz"
         "0123456789+/");
 
-    while (input_iterator != input.end())
+    while (input_iterator_local != input.end())
     {
-        a3[i++] = *input_iterator++;
+        a3[i++] = *input_iterator_local++;
 
         if (i == 3)
         {
@@ -56,7 +56,7 @@ std::string encode_base64(const std::vector<std::uint8_t> &input)
 
             for (i = 0; i < 4; i++)
             {
-                *output_iterator++ = alphabet[a4[i]];
+                *output_iterator_local++ = alphabet[a4[i]];
             }
 
             i = 0;
@@ -79,12 +79,12 @@ std::string encode_base64(const std::vector<std::uint8_t> &input)
 
         for (j = 0; j < i + 1; j++)
         {
-            *output_iterator++ = alphabet[a4[j]];
+            *output_iterator_local++ = alphabet[a4[j]];
         }
 
         while (i++ < 3)
         {
-            *output_iterator++ = '=';
+            *output_iterator_local++ = '=';
         }
     }
 
@@ -103,8 +103,8 @@ std::vector<std::uint8_t> decode_base64(const std::string &input)
 
     auto decoded_length = ((6 * input.size()) / 8) - padding_count;
     auto output = std::vector<std::uint8_t>(decoded_length);
-    auto input_iterator = input.begin();
-    auto output_iterator = output.begin();
+    auto input_iterator_local = input.begin();
+    auto output_iterator_local = output.begin();
     auto i = std::size_t(0);
     auto j = std::size_t(0);
     std::array<std::uint8_t, 3> a3{{0}};
@@ -120,14 +120,14 @@ std::vector<std::uint8_t> decode_base64(const std::string &input)
         return 255;
     };
 
-    while (input_iterator != input.end())
+    while (input_iterator_local != input.end())
     {
-        if (*input_iterator == '=')
+        if (*input_iterator_local == '=')
         {
             break;
         }
 
-        a4[i++] = static_cast<std::uint8_t>(*(input_iterator++));
+        a4[i++] = static_cast<std::uint8_t>(*(input_iterator_local++));
 
         if (i == 4)
         {
@@ -145,7 +145,7 @@ std::vector<std::uint8_t> decode_base64(const std::string &input)
 
             for (i = 0; i < 3; i++)
             {
-                *output_iterator++ = a3[i];
+                *output_iterator_local++ = a3[i];
             }
 
             i = 0;
@@ -173,7 +173,7 @@ std::vector<std::uint8_t> decode_base64(const std::string &input)
 
         for (j = 0; j < i - 1; j++)
         {
-            *output_iterator++ = a3[j];
+            *output_iterator_local++ = a3[j];
         }
     }
 

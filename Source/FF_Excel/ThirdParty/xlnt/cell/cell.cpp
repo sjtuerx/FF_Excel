@@ -372,11 +372,11 @@ void cell::hyperlink(const std::string &url, const std::string &display)
 
     // check for existing relationships
     auto relationships = manifest.relationships(ws.path(), relationship_type::hyperlink);
-    auto relation = xlnt_custom::find_if(relationships.cbegin(), relationships.cend(),
+    auto relation_local = xlnt_custom::find_if(relationships.cbegin(), relationships.cend(),
         [&url](xlnt::relationship rel) { return rel.target().path().string() == url; });
-    if (relation != relationships.end())
+    if (relation_local != relationships.end())
     {
-        d_->hyperlink_.get().relationship = *relation;
+        d_->hyperlink_.get().relationship = *relation_local;
     }
     else
     { // register a new relationship
