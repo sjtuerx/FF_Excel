@@ -12,10 +12,6 @@ public class FF_Excel : ModuleRules
 
         string ThirdPartyDir = "../Source/FF_Excel/ThirdParty";
         PrivateIncludePaths.Add(ThirdPartyDir);
-
-		// LibStudXml
-        PrivateIncludePaths.Add(ThirdPartyDir);
-
         PrivateIncludePaths.Add(Path.Combine(ThirdPartyDir, "xlnt"));
         PrivateIncludePaths.Add(Path.Combine(ThirdPartyDir, "utfcpp"));
 
